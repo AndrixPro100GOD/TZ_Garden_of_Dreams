@@ -1494,7 +1494,7 @@ GameObject:
   - component: {fileID: 8956743078761721557}
   - component: {fileID: 5614846654682281192}
   - component: {fileID: 8014289587416189911}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: "\u0417\u043E\u043C\u0431\u0438"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
