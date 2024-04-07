@@ -16,7 +16,7 @@ namespace Game2D.Gameplay.Items
             ItemName = itemName;
         }
 
-        public ItemGuidData(ItemBase item)
+        public ItemGuidData(ItemDataBase item)
         {
             ItemGUID = item.GetGUID;
             ItemName = item.GetName;

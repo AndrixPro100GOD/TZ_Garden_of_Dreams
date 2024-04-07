@@ -12,7 +12,13 @@ namespace Game2D.Gameplay.Items.Scriptable
     {
         private static readonly string _filePath = "Assets/Resources/Items/ItemsDataGuid.json";
 
-        public static void SaveItemGUID(ItemBase item)
+        #region ItemGUID Save Load Remove
+
+        /// <summary>
+        /// Сохраняет <paramref name="item"/> добавляя или перезаписывая его в JSON файле, не изменяя список с остальными предметами
+        /// </summary>
+        /// <param name="item">новый предмет</param>
+        public static void SaveItemGUID(ItemDataBase item)
         {
 #nullable enable
             List<ItemGuidData> itemsData = LoadItemGUIDs();
@@ -31,6 +37,10 @@ namespace Game2D.Gameplay.Items.Scriptable
 #nullable disable
         }
 
+        /// <summary>
+        /// Сохраняет все предметы, полностью перезаписывая весь список
+        /// </summary>
+        /// <param name="itemsData">Список предметов</param>
         public static void SaveItemGuidData(List<ItemGuidData> itemsData)
         {
             string json = JsonConvert.SerializeObject(itemsData, typeof(List<ItemGuidData>), null);
@@ -55,13 +65,102 @@ namespace Game2D.Gameplay.Items.Scriptable
         }
 
         /// <summary>
-        /// Находит все пути в проекте с Asset <see cref="ItemBase"/>
+        /// Удаляет <see cref="ItemGuidData"/> из JSON файла и удаляет Asset <see cref="ItemDataBase"/> из проекта, на который ссылался <paramref name="itemGuidData"/>
+        /// </summary>
+        /// <param name="itemGuidData">Предмет на удаление</param>
+        /// <param name="onlyJsonMessage">Выводить ли в консоль уведомление только об JSON удалении</param>
+        /// <returns></returns>
+        public static bool RemoveItem(ItemGuidData itemGuidData, bool onlyJsonMessage = false)//TODO: Сделать возмозжность записи истоии и откатов Ctrl + Z
+        {
+            bool isRemovedJSON = RemoveItemGUID(itemGuidData);
+            bool isDeletedAsset = RemoveItemAsset(itemGuidData);
+
+            if (!isRemovedJSON)
+            {
+                UnityEngine.Debug.Log($"Не удалось удалить \"{itemGuidData.ItemName}\" из JSON списка");
+            }
+
+            if (!isDeletedAsset)
+            {
+                UnityEngine.Debug.Log($"Не удалось удалить \"{itemGuidData.ItemName}\" из проекта (все Assets)");
+            }
+
+            if (isRemovedJSON && isDeletedAsset)
+            {
+                UnityEngine.Debug.Log($" \"{itemGuidData.ItemName}\" удалён из проекта (все Assets) и JSON файла");
+            }
+
+            return isRemovedJSON || isDeletedAsset;
+        }
+
+        private static bool RemoveItemGUID(ItemGuidData itemGuidData)
+        {
+            List<ItemGuidData> list = LoadItemGUIDs();
+
+            ItemGuidData itemFound = list.Find(item => item.ItemGUID == itemGuidData.ItemGUID);
+            bool result = list.Remove(itemFound);
+
+            SaveItemGuidData(list);
+
+            return result;
+        }
+
+        private static bool RemoveItemAsset(in ItemGuidData itemGuidData)
+        {
+            string[] assetPathsGUID = AssetDatabase.FindAssets($"t:{nameof(ItemDataBase)}", new string[] { "Assets" });
+
+            foreach (string assetPathGUID in assetPathsGUID)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(assetPathGUID);
+                ItemDataBase itemData = AssetDatabase.LoadAssetAtPath<ItemDataBase>(assetPath);
+
+                // Проверяем, совпадает ли GUID предмета с GUID ассета
+                if (itemData.GetGUID == itemGuidData.ItemGUID)
+                {
+                    bool result = AssetDatabase.DeleteAsset(assetPath);
+                    AssetDatabase.Refresh();
+                    return result;
+                }
+            }
+
+            return false; // Если не удалось найти ассет с указанным GUID
+        }
+
+        #endregion ItemGUID Save Load Remove
+
+        #region ItemData
+
+#nullable enable
+
+        public static ItemDataBase? GetItemData(ItemGuidData itemGuidData, out string assetPath)
+        {
+            string[] assetPathsGUID = AssetDatabase.FindAssets($"t:{nameof(ItemDataBase)}", new string[] { "Assets" });
+
+            foreach (string assetPathGUID in assetPathsGUID)
+            {
+                assetPath = AssetDatabase.GUIDToAssetPath(assetPathGUID);
+                ItemDataBase itemData = AssetDatabase.LoadAssetAtPath<ItemDataBase>(assetPath);
+
+                // Проверяем, совпадает ли GUID предмета с GUID ассета
+                if (itemData.GetGUID == itemGuidData.ItemGUID)
+                {
+                    return itemData;
+                }
+            }
+            assetPath = string.Empty;
+            return null; // Если не удалось найти ассет с указанным GUID
+        }
+
+#nullable disable
+
+        /// <summary>
+        /// Находит все пути в проекте с Asset <see cref="ItemDataBase"/>
         /// </summary>
         /// <returns>Все найденые пути</returns>
-        public static string[] FindItemAssetsFilePathInProject()
+        public static string[] FindItemDataAssetsFilePathInProject()
         {
             // Поиск Item Asset по типу класса в проекте
-            string[] assetPathsGUID = AssetDatabase.FindAssets($"t:{nameof(ItemBase)}", new string[] { "Assets" });
+            string[] assetPathsGUID = AssetDatabase.FindAssets($"t:{nameof(ItemDataBase)}", new string[] { "Assets" });
 
             string[] assetFilePaths = new string[assetPathsGUID.Length];
 
@@ -74,11 +173,13 @@ namespace Game2D.Gameplay.Items.Scriptable
             return assetFilePaths;
         }
 
+        #endregion ItemData
+
         /// <summary>
         /// Загружает предметы по пути указанных в <paramref name="assetsFilePaths"/> для того, чтобы обновить JSON файл с предметами
         /// </summary>
         /// <param name="assetsFilePaths"></param>
-        /// <returns>Все найденные в проекте ассеты с <see cref="ItemBase"/> по указаному пути <paramref name="assetsFilePaths"/></returns>
+        /// <returns>Все найденные в проекте ассеты с <see cref="ItemDataBase"/> по указаному пути <paramref name="assetsFilePaths"/></returns>
         public static List<ItemGuidData> RestoreData(string[] assetsFilePaths)
         {
 #nullable enable
@@ -87,7 +188,7 @@ namespace Game2D.Gameplay.Items.Scriptable
 
             foreach (string path in assetsFilePaths)
             {
-                ItemBase? item = AssetDatabase.LoadAssetAtPath<ItemBase>(path);// Получаем всю информацию об ассете в качестве типа данных
+                ItemDataBase? item = AssetDatabase.LoadAssetAtPath<ItemDataBase>(path);// Получаем всю информацию об ассете в качестве типа данных
 
                 if (item == null)
                 {
@@ -118,8 +219,17 @@ namespace Game2D.Gameplay.Items.Scriptable
         /// <returns>Список всех найденых ассетов с предметами в проекте</returns>
         public static List<ItemGuidData> FindAndResoreData(out List<ItemGuidData> unfoundItems)
         {
-            List<ItemGuidData> fountItems = RestoreData(FindItemAssetsFilePathInProject());
-            unfoundItems = fountItems.FindAll(item => !item.IsAssetExist);
+            //Находим все предметы в проекте
+            List<ItemGuidData> fountItems = RestoreData(FindItemDataAssetsFilePathInProject());
+
+            //Создаём список ненайденных предметов
+            List<ItemGuidData> unfoundItemsFromList = fountItems.FindAll(item => !item.IsAssetExist);
+
+            //Удаляем из списка "всех найденных предметов" все ненайденные
+            _ = fountItems.RemoveAll(item => unfoundItemsFromList.Contains(item));
+
+            //Для модификатора out, так как он не может быть предикатом при использовании RemoveAll
+            unfoundItems = unfoundItemsFromList;
 
             return fountItems;
         }

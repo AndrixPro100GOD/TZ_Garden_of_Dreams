@@ -1,7 +1,7 @@
-﻿namespace Game2D.Gameplay.Combat
+﻿namespace Game2D.Gameplay.Items.Combat
 {
     [System.Serializable]
-    public enum AmmoEffect : byte
+    public enum AmmoEffectTypes : byte
     {
         Kinematic = 0,
         Flaming,

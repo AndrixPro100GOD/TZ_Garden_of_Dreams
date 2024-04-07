@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using Game2D.Gameplay.Items.Scriptable;
+
+using UnityEngine;
 
 using static ProjectConfiguration.ProjectConfiguration;
 
-namespace Game2D.Gameplay.Combat.Scriptable
+namespace Game2D.Gameplay.Items.Combat.Scriptable
 {
     [CreateAssetMenu(menuName = NAME_ROOT_ITEM + "Ammo item", fileName = "Ammo Item")]
-    public class AmmoItem : ScriptableObject
+    public class AmmoItemData : ItemDataBase
     {
         [SerializeField]
         private float ammoDamage = 1;
@@ -14,10 +16,10 @@ namespace Game2D.Gameplay.Combat.Scriptable
         private AmmoTypes ammoType = AmmoTypes.Mm9;
 
         [SerializeField]
-        private AmmoEffect ammoEffect = AmmoEffect.Kinematic;
+        private AmmoEffectTypes ammoEffect = AmmoEffectTypes.Kinematic;
 
         public float GetDamage => ammoDamage;
         public AmmoTypes GetAmmoType => ammoType;
-        public AmmoEffect GetAmmoEffect => ammoEffect;
+        public AmmoEffectTypes GetAmmoEffect => ammoEffect;
     }
 }

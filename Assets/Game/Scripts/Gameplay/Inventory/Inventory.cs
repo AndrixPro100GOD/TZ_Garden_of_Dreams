@@ -1,4 +1,4 @@
-﻿using Game2D.Gameplay.Items.Scriptable;
+﻿using Game2D.Gameplay.Items;
 
 using System.Collections.Generic;
 

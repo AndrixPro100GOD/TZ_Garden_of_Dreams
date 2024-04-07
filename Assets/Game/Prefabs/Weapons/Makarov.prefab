@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8024668428293042625}
   - component: {fileID: 8024668428293042638}
+  - component: {fileID: 4085120863839019853}
   m_Layer: 0
   m_Name: Makarov
   m_TagString: Untagged
@@ -117,6 +118,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4085120863839019853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8024668428293042639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9aae99e504887f439aef03c4f6b908a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_weaponItemData: {fileID: 11400000, guid: 54866c291b67038409ed4570b7b079fb, type: 2}
+  m_firePoint: {fileID: 8287137330923215139}
+  bulletSpeed: 0
+  fireRate: 0
 --- !u!1 &8189309931797394685
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 {
     "name": "Game",
-    "rootNamespace": "",
+    "rootNamespace": "Game2D",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -10,13 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e18c4d0d2b7350d43bff2617f28c64e2, type: 3}
-  m_Name: Weapon Item
+  m_Name: AK-74
   m_EditorClassIdentifier: 
-  itemGUID: 6513d5e2-fe5b-4a40-a4a9-bbb20588cc27
-  itemSprite: {fileID: 0}
-  itemName: New Item 6513d5e2-fe5b-4a40-a4a9-bbb20588cc27
+  itemGUID: 560c65bb-2239-4ac0-bdbf-2ac84c70c871
+  itemPrefab: {fileID: 2862678155561030728, guid: 18f6b2bf98c0a1342aa056a296d4c575, type: 3}
+  itemSprite: {fileID: 21300000, guid: 6532bc2c52f179142a7333cc0f5faeda, type: 3}
+  itemName: Pog
   itemDescription: The item description
   itemStackMaxCount: 64
   weaponDamageAmmoMultiplyer: 1
   weaponAmmoInMag: 30
+  weaponReloadTime: 1
+  weaponFireRate: 0.5
+  weaponBulletSpeed: 10
   weaponUsesAmmoType: 1

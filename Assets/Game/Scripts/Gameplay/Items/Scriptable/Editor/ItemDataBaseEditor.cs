@@ -4,8 +4,8 @@ using static Game2D.Gameplay.Items.Scriptable.ItemsDataManager;
 
 namespace Game2D.Gameplay.Items.Scriptable
 {
-    [CustomEditor(typeof(ItemBase), true)]
-    public class ItemBaseEditor : Editor
+    [CustomEditor(typeof(ItemDataBase), true)]
+    public class ItemDataBaseEditor : Editor
     {
         private SerializedProperty _itemGUIDProperty;
         private SerializedProperty _itemNameProperty;
@@ -21,10 +21,10 @@ namespace Game2D.Gameplay.Items.Scriptable
             {
                 _itemGUIDProperty.stringValue = System.Guid.NewGuid().ToString();//Let's hope it's will not hit a jackpot
                 _itemNameProperty.stringValue = $"New Item {_itemGUIDProperty.stringValue}";
-
-                SaveItemGUID((ItemBase)target);
-
                 _ = serializedObject.ApplyModifiedProperties();
+
+                SaveItemGUID((ItemDataBase)target);
+
             }
 
             _previousItemName = _itemNameProperty.stringValue;
@@ -63,7 +63,7 @@ namespace Game2D.Gameplay.Items.Scriptable
                     _itemNameProperty.stringValue = _previousItemName;
                 }
 
-                SaveItemGUID((ItemBase)target);
+                SaveItemGUID((ItemDataBase)target);
 
                 _previousItemName = _itemNameProperty.stringValue;
             }

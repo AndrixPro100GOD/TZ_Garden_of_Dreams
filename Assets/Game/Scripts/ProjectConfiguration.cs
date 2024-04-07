@@ -9,9 +9,9 @@ namespace ProjectConfiguration
     {
         public const string NAME_ROOT = "2D Game/";
         public const string NAME_ROOT_CHARACTER = NAME_ROOT + "Character/";
-        public const string NAME_ROOT_COMBAT = NAME_ROOT + "Combat/";
         public const string NAME_ROOT_PLAYER = NAME_ROOT + "Player/";
         public const string NAME_ROOT_ITEM = NAME_ROOT + "Item/";
+        public const string NAME_ROOT_ITEM_COMBAT = NAME_ROOT_ITEM + "Combat/";
     }
 
     public static class RecurcesPath

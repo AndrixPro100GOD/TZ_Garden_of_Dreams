@@ -1,4 +1,4 @@
-﻿namespace Game2D.Gameplay.Combat
+﻿namespace Game2D.Gameplay.Items.Combat
 {
     [System.Serializable]
     public enum AmmoTypes : byte
