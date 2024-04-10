@@ -1,18 +1,28 @@
-﻿using UnityEngine;
+﻿using Game2D.Gameplay.Inventory;
 
-using static ProjectConfiguration.ProjectConfiguration;
+using UnityEngine;
+
+using static ProjectConfiguration.ProjectNames;
 
 namespace Game2D.Gameplay.Character
 {
     [AddComponentMenu(NAME_ROOT_CHARACTER + "Character manager")]
     [DisallowMultipleComponent]
-    [RequireComponent(typeof(CharacterMovementController))]
-    public class CharacterManager : MonoBehaviour
+    [RequireComponent(typeof(CharacterMovementController), typeof(CharacterInventory))]
+    public class CharacterManager : MonoBehaviour, ICharacter
     {
         [SerializeField]
         private CharacterMovementController m_characterMovementController;
 
+        [SerializeField]
+        private CharacterItemController m_characterItemController;
+
+        [SerializeField]
+        private CharacterInventory m_characterInventory;
+
         public CharacterMovementController GetCharacterMovement => m_characterMovementController;
+
+        public IInventoryStorage InventoryStorage => m_characterInventory.GetInventoryStorage;
 
         #region Init
 

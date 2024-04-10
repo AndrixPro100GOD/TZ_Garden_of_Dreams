@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 
-namespace Game2D.Assets.Game.Scripts.Gameplay.Inventory.UI
+using static ProjectConfiguration.ProjectNames;
+
+namespace Game2D.Gameplay.Inventory.UI
 {
+    [AddComponentMenu(NAME_ROOT_ITEM + "Inventory controller UI")]
     public class InventoryControllerUI : MonoBehaviour
     {
-        // Use this for initialization
-        private void Start()
-        {
-        }
+        [SerializeField]
+        private InventoryStorage m_inventory;
 
-        // Update is called once per frame
-        private void Update()
+        [SerializeField]
+        public void Show()
         {
         }
     }

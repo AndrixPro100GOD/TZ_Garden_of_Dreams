@@ -197,3 +197,4 @@ MonoBehaviour:
   m_firePoint: {fileID: 5817825769076211299}
   bulletSpeed: 0
   fireRate: 0
+  bulletPrefab: {fileID: 2397236526762393404, guid: 62e2ca3b72773c84aa4d61fd2350cf39, type: 3}

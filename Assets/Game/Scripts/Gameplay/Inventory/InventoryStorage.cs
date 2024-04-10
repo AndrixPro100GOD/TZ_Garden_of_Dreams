@@ -1,12 +1,16 @@
 ﻿using Game2D.Gameplay.Items;
 
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace Game2D.Assets.Game.Scripts.Gameplay.Inventory
+using static ProjectConfiguration.ProjectNames;
+
+namespace Game2D.Gameplay.Inventory
 {
-    public class Inventory : MonoBehaviour
+    [AddComponentMenu(NAME_ROOT_ITEM + "InventoryStorage")]
+    public class InventoryStorage : MonoBehaviour, IInventoryStorage
     {
         [Min(1)]
         [SerializeField]
@@ -16,6 +20,10 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Inventory
         private List<Slot> m_intventorySlots = new();
 
         public bool HasEmplySlots => m_intventorySlots.Count < m_slotSizeCount;
+
+        public List<Slot> Slots => m_intventorySlots;
+
+        public event Action OnInventoryChanged;
 
         public bool AddItem<TItem>(TItem item, int count) where TItem : ItemBase
         {
@@ -46,12 +54,16 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Inventory
             return false;
         }
 
-        [System.Serializable]
-        public class Slot
+        public void SaveInventory()
         {
-            //public Slot( , int count)
-            //{
-            //}
+        }
+
+        public void LoadInventory()
+        {
+        }
+
+        public void SetInventory(List<Slot> slots)
+        {
         }
     }
 }

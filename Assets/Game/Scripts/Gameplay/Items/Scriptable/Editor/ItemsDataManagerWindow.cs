@@ -1,6 +1,8 @@
-﻿using Game2D.Scripts.Editor.Windows;
+﻿using Game2D.DataManagment;
+using Game2D.Scripts.Editor.Windows;
 
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEditor;
 
@@ -10,7 +12,10 @@ namespace Game2D.Gameplay.Items.Scriptable
 {
     public class ItemsDataManagerWindow : EditorWindow
     {
-        private List<ItemGuidData> foundAssets = new(), unfoundItems = new();
+        private List<(DataGuidSaver data, string assetPath)> foundData = new();
+        private List<DataGuidSaver> unfoundData = new();
+        private List<(ItemDataBase assetData, string assetPath)> unfoundAssetData = new();
+
         private Vector2 scrollPosition;
 #nullable enable
         private static ItemsDataManagerWindow? _currentWindow;
@@ -34,6 +39,11 @@ namespace Game2D.Gameplay.Items.Scriptable
             return window;
         }
 
+        private void Awake()
+        {
+            CountAssets();
+        }
+
         private void OnDestroy()
         {
 #pragma warning disable S2696 // Instance members should not write to "static" fields
@@ -43,59 +53,75 @@ namespace Game2D.Gameplay.Items.Scriptable
 
         private void OnGUI()
         {
-            if (HasAssetsSearched())
-            {
-                DisplayCount();
-                DisplayUnfoundItems();
-            }
+            DisplayCount();
+            DisplayUnfoundData();
+            DisplayUnfoundAssetsData();
 
-            if (GUILayout.Button("Refresh and Restore items data"))
+            if (GUILayout.Button("Refresh"))
             {
                 CountAssets();
             }
 
-            if (HasAssetsSearched())
-            {
-                GUILayout.Label("Найденные Assets в проекте:");
-                DisplayAssetPaths(foundAssets);
-            }
-        }
-
-        private bool HasAssetsSearched()
-        {
-            return foundAssets != null && foundAssets.Count > 0;
+            DisplayAssetPaths(foundData);
         }
 
         public void CountAssets()
         {
-            foundAssets = ItemsDataManager.FindAndResoreData(out unfoundItems);
+            foundData = GlobalDataManager.GetItemsDataManager.GetDataWithAssetPaths().ToList();
+            unfoundData = GlobalDataManager.GetItemsDataManager.GetUnfoundData();
+            unfoundAssetData = GlobalDataManager.GetItemsDataManager.GetUnfoundAssetsData();
         }
 
         private void DisplayCount()
         {
-            GUILayout.Label($"Found\t Assets in project: {foundAssets.Count}");
-            GUILayout.Label($"Unfound Assets in Project: {unfoundItems.Count}",
+            GUILayout.Box("Количество", new GUIStyle(GUI.skin.box)
+            {
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter
+            }, GUILayout.ExpandWidth(true));
+
+            GUILayout.BeginVertical(GUI.skin.box);
+
+            GUILayout.Label($"Найденные предметы в проекте: {foundData.Count}");
+            GUILayout.Label($"Ненайденные предметы в проекте: {unfoundData.Count}",
                 new GUIStyle(GUI.skin.label)
                 {
-                    normal = { textColor = unfoundItems.Count > 0 ? Color.red : Color.green },
+                    normal = { textColor = unfoundData.Count > 0 ? Color.red : Color.green },
                     fontStyle = FontStyle.Bold
                 });
+            GUILayout.Label($"Найденные неизвестные предметы в проекте: {unfoundAssetData.Count}");
+
+            GUILayout.EndVertical();
+
+            GUILayout.Space(2.5f);
+
+            GUILayout.Box("", new GUIStyle(GUI.skin.box)
+            {
+                normal = new()
+                {
+                    background = EditorGUIUtility.whiteTexture,
+                    textColor = Color.red,
+                }
+            }, GUILayout.ExpandWidth(true), GUILayout.Height(1));
+
+            GUILayout.Space(2.5f);
         }
 
-        private void DisplayUnfoundItems()
+        private void DisplayUnfoundData()
         {
-            if (unfoundItems.Count < 1)
+            if (unfoundData.Count < 1)
             {
                 return;
             }
 
-            GUILayout.Label($"Unfound items: {unfoundItems.Count}");
+            //Это данные из базы данных, которые не нашли скриптабельные объекты в проекте, на которые они ссылались по GUID
+            GUILayout.Label($"Найденых неизвестных данных: {unfoundData.Count}");
 
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
-            foreach (ItemGuidData item in unfoundItems)
+            foreach (DataGuidSaver item in unfoundData)
             {
-                GUILayout.Label($"Name: `{item.ItemName}` GUID: `{item.ItemGUID}`",
+                GUILayout.Label($"Name: `{item.DataName}` GUID: `{item.DataGuid}`",
                     new GUIStyle(GUI.skin.label)
                     {
                         normal = new GUIStyleState() { background = Texture2D.grayTexture, textColor = Color.white },
@@ -110,7 +136,7 @@ namespace Game2D.Gameplay.Items.Scriptable
 #pragma warning disable S1066 // Mergeable "if" statements should be combined
                     if (ConfirmationWindow.ShowWindow("Удалить полностью этот Asset из проекта и JSON файла?"))
                     {
-                        _ = ItemsDataManager.RemoveItem(item, true);
+                        GlobalDataManager.GetItemsDataManager.DeleteData(item);
                         CountAssets();
                     }
 #pragma warning restore S1066 // Mergeable "if" statements should be combined
@@ -121,15 +147,39 @@ namespace Game2D.Gameplay.Items.Scriptable
             GUILayout.EndScrollView();//Ошибка
         }
 
-        private void DisplayAssetPaths(List<ItemGuidData> itemsWithAssetPath)
+        private void DisplayUnfoundAssetsData()
         {
+            if (unfoundAssetData.Count < 1)
+            {
+                return;
+            }
+            GUILayout.BeginHorizontal();
+
+            //Это скриптабельные объекты, о которых нет информации в базе данных
+            GUILayout.Label($"Найденых неизвесных ассетов: {unfoundAssetData.Count}");
+
+            if (GUILayout.Button("Восстановить ассеты в базу данных"))
+            {
+                GlobalDataManager.GetItemsDataManager.RestoreDatabase();
+                CountAssets();
+            }
+            GUILayout.EndHorizontal();
+        }
+
+        private void DisplayAssetPaths(List<(DataGuidSaver data, string assetPath)> dataWithAssetPath)
+        {
+            if (dataWithAssetPath.Count < 1)
+            {
+                return;
+            }
+
             scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
-            for (int i = 0; i < itemsWithAssetPath.Count; i++)
+            for (int i = 0; i < dataWithAssetPath.Count; i++)
             {
                 GUILayout.BeginHorizontal();
 
-                string assetPath = itemsWithAssetPath[i].AssetPath;
+                string assetPath = dataWithAssetPath[i].assetPath;
                 if (GUILayout.Button(assetPath, EditorStyles.miniButton))
                 {
                     Selection.activeObject = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
@@ -142,7 +192,8 @@ namespace Game2D.Gameplay.Items.Scriptable
 #pragma warning disable S1066 // Mergeable "if" statements should be combined
                     if (ConfirmationWindow.ShowWindow("Удалить полностью этот Asset из проекта и JSON файла?"))
                     {
-                        _ = ItemsDataManager.RemoveItem(itemsWithAssetPath[i]);
+                        GlobalDataManager.GetItemsDataManager.DeleteData(dataWithAssetPath[i].data);
+
                         CountAssets();
                     }
 #pragma warning restore S1066 // Mergeable "if" statements should be combined

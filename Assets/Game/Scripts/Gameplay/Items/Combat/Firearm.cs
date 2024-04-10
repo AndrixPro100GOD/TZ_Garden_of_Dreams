@@ -4,7 +4,7 @@ using System.Collections;
 
 using UnityEngine;
 
-using static ProjectConfiguration.ProjectConfiguration;
+using static ProjectConfiguration.ProjectNames;
 
 namespace Game2D.Gameplay.Items.Combat
 {
@@ -29,6 +29,7 @@ namespace Game2D.Gameplay.Items.Combat
         public bool IsReloading { get; private set; }
 
         private int _currentAmmo;
+        private Transform _myTransform;
 
         private void Awake()
         {
@@ -38,6 +39,8 @@ namespace Game2D.Gameplay.Items.Combat
         [ContextMenu("Initialization (Load data from scriptable)")]
         private void Initialization()
         {
+            _myTransform = transform;
+
             if (m_weaponItemData == null)
             {
                 Debug.LogError("У огнестрела нету данных об предмете");
@@ -51,6 +54,8 @@ namespace Game2D.Gameplay.Items.Combat
 
         #region Firearms Logic
 
+        public Bullet bulletPrefab;
+
         public void Shoot()
         {
             if (_currentAmmo < 1)
@@ -58,6 +63,8 @@ namespace Game2D.Gameplay.Items.Combat
                 Reload();
                 return;
             }
+
+            Instantiate(bulletPrefab, m_firePoint.position, _myTransform.rotation);
         }
 
         public void Reload()

@@ -1,14 +1,21 @@
-﻿using UnityEngine;
+﻿using Game2D.Gameplay.Inventory;
 
-using static ProjectConfiguration.ProjectConfiguration;
+using UnityEngine;
 
-namespace Game2D.Assets.Game.Scripts.Gameplay.Character
+using static ProjectConfiguration.ProjectNames;
+
+namespace Game2D.Gameplay.Character
 {
     [DisallowMultipleComponent]
     [AddComponentMenu(NAME_ROOT_CHARACTER + "Character inventory")]
     public class CharacterInventory : MonoBehaviour
     {
-        //[SerializeField]
-        //private
+        [SerializeField]
+        private bool m_isDropInventory = true;
+
+        [SerializeField]
+        private Inventory.InventoryStorage Inventory;
+
+        public IInventoryStorage GetInventoryStorage => Inventory;
     }
 }

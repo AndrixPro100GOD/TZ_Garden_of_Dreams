@@ -8,7 +8,7 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Items
     public class ItemController : MonoBehaviour
     {
 #nullable enable
-
+        public Vector2 ItemLookPosition { get => _itemLookPosition; set => SetLookPosition(value); }
         public IItem? CurrentItem { get => _currentItem; set => SetItem(value); }
         public bool HasItem => _currentItem != null;
         public bool IsItemInteractable => _currentItemInteractable != null;
@@ -16,6 +16,7 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Items
         private Transform _myTransform;
 
         private IItem? _currentItem;
+        private Vector2 _itemLookPosition;
         private IInteractableItem? _currentItemInteractable;
         private Transform? _currentItemTransform;
 
@@ -28,7 +29,10 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Items
 
         private void Update()
         {
-            if (!HasItem) return;
+            if (!HasItem)
+            {
+                return;
+            }
 
             UpdatePosition();
         }
@@ -57,11 +61,26 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Items
             _currentItemTransform = item.GetItem.transform;
         }
 
-        public void UpdatePosition()
+        private void UpdatePosition()
         {
-            if (_currentItemTransform == null) return;
+            if (_currentItemTransform == null)
+            {
+                return;
+            }
 
             _currentItemTransform.position = _myTransform.position;
+        }
+
+        public void SetLookPosition(in Vector2 position)
+        {
+            _itemLookPosition = position;
+
+            if (_currentItemTransform == null)
+            {
+                return;
+            }
+
+            _currentItemTransform.rotation = Quaternion.LookRotation((Vector2)_currentItemTransform.position - position, Vector3.right);
         }
 
         public void IteractionMain()
@@ -71,7 +90,9 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Items
                 Debug.Log("Not Interactable");//Допустим издаёт звук
             }
             else
+            {
                 _currentItemInteractable.Interacting();
+            }
         }
 
         public void InteractionAlternative()
@@ -81,15 +102,19 @@ namespace Game2D.Assets.Game.Scripts.Gameplay.Items
                 Debug.Log("Not Interactable");//Допустим издаёт звук
             }
             else
+            {
                 _currentItemInteractable.InteractingAlt();
+            }
         }
 
         public void DropItem()
         {
-            if (!HasItem) return;
+            if (!HasItem)
+            {
+                return;
+            }
 
-            if (_currentItemInteractable != null)
-                _currentItemInteractable.DropingItem();
+            _currentItemInteractable?.DropingItem();
 
             SetItem(null);
         }

@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-using static ProjectConfiguration.ProjectConfiguration;
+using static ProjectConfiguration.ProjectNames;
 
 namespace Game2D.Gameplay.Items.Combat.Scriptable
 {

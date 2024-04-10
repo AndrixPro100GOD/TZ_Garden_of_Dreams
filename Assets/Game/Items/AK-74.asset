@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e18c4d0d2b7350d43bff2617f28c64e2, type: 3}
   m_Name: AK-74
   m_EditorClassIdentifier: 
-  itemGUID: 560c65bb-2239-4ac0-bdbf-2ac84c70c871
+  dataGuid: e936fb3d-c224-42e7-9add-0ee7301d3d08
+  dataName: New Item e936fb3d-c224-42e7-9add-0ee7301d3d08
   itemPrefab: {fileID: 2862678155561030728, guid: 18f6b2bf98c0a1342aa056a296d4c575, type: 3}
   itemSprite: {fileID: 21300000, guid: 6532bc2c52f179142a7333cc0f5faeda, type: 3}
-  itemName: Pog
   itemDescription: The item description
   itemStackMaxCount: 64
   weaponDamageAmmoMultiplyer: 1

@@ -1,11 +1,11 @@
-﻿using UnityEditor;
+﻿using Game2D.Gameplay.Items.Scriptable;
 
-using static Game2D.Gameplay.Items.Scriptable.ItemsDataManager;
+using UnityEditor;
 
-namespace Game2D.Gameplay.Items.Scriptable
+namespace Game2D.DataManagment
 {
     [CustomEditor(typeof(ItemDataBase), true)]
-    public class ItemDataBaseEditor : Editor
+    public class ItemsDataBaseEditor : UnityEditor.Editor
     {
         private SerializedProperty _itemGUIDProperty;
         private SerializedProperty _itemNameProperty;
@@ -14,8 +14,8 @@ namespace Game2D.Gameplay.Items.Scriptable
 
         private void OnEnable()
         {
-            _itemGUIDProperty = serializedObject.FindProperty("itemGUID");
-            _itemNameProperty = serializedObject.FindProperty("itemName");
+            _itemGUIDProperty = serializedObject.FindProperty("dataGuid");
+            _itemNameProperty = serializedObject.FindProperty("dataName");
 
             if (string.IsNullOrEmpty(_itemGUIDProperty.stringValue))
             {
@@ -23,8 +23,7 @@ namespace Game2D.Gameplay.Items.Scriptable
                 _itemNameProperty.stringValue = $"New Item {_itemGUIDProperty.stringValue}";
                 _ = serializedObject.ApplyModifiedProperties();
 
-                SaveItemGUID((ItemDataBase)target);
-
+                GlobalDataManager.GetItemsDataManager.SaveData(GlobalDataManager.GetItemsDataManager.Convert((ItemDataBase)target));
             }
 
             _previousItemName = _itemNameProperty.stringValue;
@@ -63,7 +62,7 @@ namespace Game2D.Gameplay.Items.Scriptable
                     _itemNameProperty.stringValue = _previousItemName;
                 }
 
-                SaveItemGUID((ItemDataBase)target);
+                GlobalDataManager.GetItemsDataManager.SaveData(GlobalDataManager.GetItemsDataManager.Convert((ItemDataBase)target));
 
                 _previousItemName = _itemNameProperty.stringValue;
             }

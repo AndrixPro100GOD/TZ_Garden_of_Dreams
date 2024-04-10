@@ -1,20 +1,30 @@
 ﻿using Game2D.Gameplay.Character;
+using Game2D.Gameplay.Inventory;
 
 using System;
 
 using UnityEngine;
 
-using static ProjectConfiguration.ProjectConfiguration;
+using static ProjectConfiguration.ProjectNames;
 
 namespace Game2D.Gameplay.Players
 {
     [AddComponentMenu(NAME_ROOT_PLAYER + "Player Controller")]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IInventorySaver
     {
+        public const string ID_SAVE = "Player";
+
         [SerializeField]
         private CharacterManager m_character;
 
         public Vector2 PlayerInputMovement { get; private set; }
+        public Vector2 PlayerCursorPosition { get; private set; }
+
+        public string IdSave => ID_SAVE;
+
+        public IInventoryStorage InventoryStorage => throw new NotImplementedException();
+
+        private Camera _mainCamera;
 
         // Use this for initialization
         private void Start()
@@ -24,14 +34,14 @@ namespace Game2D.Gameplay.Players
                 InitializeCharacter();
             }
 
+            _mainCamera = Camera.main;
+
             Debug.Assert(m_character != null, "У игрока нету персонажа");
         }
 
         // Update is called once per frame
         private void Update()
         {
-            _ = ReadInputMovement();
-
             if (m_character == null)
             {
                 return;
@@ -47,6 +57,11 @@ namespace Game2D.Gameplay.Players
         private Vector2 ReadInputMovement()
         {
             return PlayerInputMovement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        }
+
+        private Vector2 ReadMousePosition()
+        {
+            return (Vector2)_mainCamera.ScreenToWorldPoint(Input.mousePosition);
         }
 
         #endregion Player Input
