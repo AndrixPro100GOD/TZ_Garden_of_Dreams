@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Game2D.DataManagment
+namespace Game2D.DataManagment.Scriptable
 {
     public abstract class DataGuidScriptable : ScriptableObject, IGuidData
     {

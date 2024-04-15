@@ -7,8 +7,9 @@ namespace Game2D.Gameplay.Inventory
 #nullable enable
 
         public int SlotIndex { get; set; }
-        public IItem? SlotItem { get; set; }
         public int SlotCount { get; set; }
+
+        public IItem? SlotItem { get; set; }
 
 #nullable disable
     }

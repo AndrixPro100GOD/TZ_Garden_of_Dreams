@@ -1,4 +1,5 @@
 ﻿using Game2D.DataManagment;
+using Game2D.DataManagment.Scriptable;
 
 using UnityEngine;
 

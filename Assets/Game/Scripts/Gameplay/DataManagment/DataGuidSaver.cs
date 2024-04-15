@@ -6,10 +6,10 @@ namespace Game2D.DataManagment
     public class DataGuidSaver : IGuidData
     {
         [JsonConstructor]
-        public DataGuidSaver(string itemGUID, string itemName)
+        public DataGuidSaver(string dataGuid, string dataName)
         {
-            DataGuid = itemGUID;
-            DataName = itemName;
+            DataGuid = dataGuid;
+            DataName = dataName;
         }
 
         public DataGuidSaver(IGuidData item)
@@ -17,9 +17,6 @@ namespace Game2D.DataManagment
             DataGuid = item.DataGuid;
             DataName = item.DataName;
         }
-
-        public DataGuidSaver()
-        { }
 
         [JsonProperty]
         public string DataGuid { get; set; }
